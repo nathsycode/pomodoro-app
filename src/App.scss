@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+html {
+  font-size: 62.5%;
+}
+
+$color-primary: #0c0f0a;
+$color-primary-light: #ffffff;
+$color-accent-1: #ff206e;
+$color-accent-2: #41ead4;
+$color-accent-3: #fbff12;
+$color-background: #ffeedb;
+$font-main: "Bebas Neue", sans-serif;
+$font-regular: 4.8rem;
+$font-large: 8.4rem;
+$font-small: 3.6rem;
+
+@mixin thickBox {
+  border: 0.3rem solid $color-primary;
+  box-shadow: 0.4rem 0.4rem 0 $color-primary;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: $font-main;
+  color: $color-primary;
+  letter-spacing: 0.3rem;
+}
+
+body {
+  height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: $color-background;
+}
+
+#timer-label {
+  font-size: $font-large;
+}
+
+#time-left {
+  @include thickBox();
+  font-size: calc($font-large - 0.2rem);
+  color: $color-primary-light;
+  background: $color-accent-1;
+  width: 24rem;
+  height: 10rem;
+  margin: 0 auto;
+  text-align: center;
+}
