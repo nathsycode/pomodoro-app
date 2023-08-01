@@ -154,18 +154,20 @@ export default function App() {
       <h1 id="time-left">
         {formatTime(!isBreak ? currentTime : currentBreakTime)}
       </h1>
-      <button
-        id="start_stop"
-        onClick={() => dispatch({ type: ActionType.START })}
-      >
-        START
-      </button>
-      <button onClick={() => dispatch({ type: ActionType.PAUSE })}>
-        PAUSE
-      </button>
-      <button id="reset" onClick={handleReset()}>
-        RESET
-      </button>
+      <div className="controls">
+        <button
+          id="start_stop"
+          onClick={() => dispatch({ type: ActionType.START })}
+        >
+          START
+        </button>
+        <button onClick={() => dispatch({ type: ActionType.PAUSE })}>
+          PAUSE
+        </button>
+        <button id="reset" onClick={handleReset()}>
+          RESET
+        </button>
+      </div>
       <button
         id="session-increment"
         onClick={() =>
