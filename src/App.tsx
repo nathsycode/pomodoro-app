@@ -1,5 +1,6 @@
 import { useReducer, useEffect } from "react";
 import "./App.scss";
+import Controls from "./components/controls.tsx";
 
 const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -7,11 +8,6 @@ const reducer = (state: State, action: Action) => {
       return {
         ...state,
         isActive: !state.isActive,
-      };
-    case ActionType.PAUSE:
-      return {
-        ...state,
-        isActive: false,
       };
     case ActionType.RESET:
       return {
@@ -141,92 +137,122 @@ export default function App() {
       : "";
   }, [initTime, initBreakTime]);
 
-  const handleReset = () => () => {
+  const handleReset = () => {
     const audio = document.getElementById("beep") as HTMLAudioElement;
     audio.pause();
     audio.currentTime = 0;
     dispatch({ type: ActionType.RESET });
   };
 
+  const handleStart = () => {
+    dispatch({ type: ActionType.START });
+  };
+
   return (
     <>
-      <p id="timer-label">{!isBreak ? "Time To Work!" : "Take a break"}</p>
-      <h1 id="time-left">
-        {formatTime(!isBreak ? currentTime : currentBreakTime)}
-      </h1>
-      <div className="controls">
-        <button
-          id="start_stop"
-          onClick={() => dispatch({ type: ActionType.START })}
+      <img
+        className="img-alarm"
+        src="https://i.imgur.com/PFic61L.png"
+        alt="alarm background"
+      />
+      <div className="progress-bar-container">
+        <div
+          className={`progress-bar ${
+            !isBreak ? "progress-session" : "progress-break"
+          }`}
+          style={{
+            width: !isBreak
+              ? `${((initTime - currentTime) / initTime) * 100}%`
+              : `${
+                  ((initBreakTime - currentBreakTime) / initBreakTime) * 100
+                }%`,
+          }}
+        ></div>
+      </div>
+      <div className="main-container">
+        <p id="timer-label">{!isBreak ? "Time To Work!" : "Take a break"}</p>
+        <h1 id="time-left">
+          {formatTime(!isBreak ? currentTime : currentBreakTime)}
+        </h1>
+        <Controls
+          handleReset={handleReset}
+          handleStart={handleStart}
+          isActive={state.isActive}
+        />
+        <div className="default-controls">
+          <div className="session-controls">
+            <button
+              id="session-increment"
+              className="increment"
+              onClick={() =>
+                dispatch({
+                  type: ActionType.UPDATE_DEFAULT,
+                  payload: { value: 60, session: SessionType.WORK },
+                })
+              }
+            >
+              +
+            </button>
+            <h3 className="labels" id="session-label">
+              SESSION
+            </h3>
+            <h3 className="values" id="session-length">
+              {formatInitTime(state.initTime)}
+            </h3>
+            <button
+              id="session-decrement"
+              className="decrement"
+              onClick={() =>
+                dispatch({
+                  type: ActionType.UPDATE_DEFAULT,
+                  payload: { value: -60, session: SessionType.WORK },
+                })
+              }
+            >
+              -
+            </button>
+          </div>
+          <div className="break-controls">
+            <button
+              id="break-increment"
+              className="increment"
+              onClick={() =>
+                dispatch({
+                  type: ActionType.UPDATE_DEFAULT,
+                  payload: { value: 60, session: SessionType.BREAK },
+                })
+              }
+            >
+              +
+            </button>
+            <h3 className="labels" id="break-label">
+              BREAK
+            </h3>
+            <h3 className="values" id="break-length">
+              {formatInitTime(state.initBreakTime)}
+            </h3>
+            <button
+              id="break-decrement"
+              className="decrement"
+              onClick={() =>
+                dispatch({
+                  type: ActionType.UPDATE_DEFAULT,
+                  payload: { value: -60, session: SessionType.BREAK },
+                })
+              }
+            >
+              -
+            </button>
+          </div>
+        </div>
+        <audio
+          id="beep"
+          preload="auto"
+          src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
         >
-          START
-        </button>
-        <button onClick={() => dispatch({ type: ActionType.PAUSE })}>
-          PAUSE
-        </button>
-        <button id="reset" onClick={handleReset()}>
-          RESET
-        </button>
+          Play
+        </audio>
       </div>
-      <button
-        id="session-increment"
-        onClick={() =>
-          dispatch({
-            type: ActionType.UPDATE_DEFAULT,
-            payload: { value: 60, session: SessionType.WORK },
-          })
-        }
-      >
-        +
-      </button>
-      <div id="session-label">
-        SESSION
-        <span id="session-length">{formatInitTime(state.initTime)}</span>
-      </div>
-      <button
-        id="session-decrement"
-        onClick={() =>
-          dispatch({
-            type: ActionType.UPDATE_DEFAULT,
-            payload: { value: -60, session: SessionType.WORK },
-          })
-        }
-      >
-        -
-      </button>
-      <button
-        id="break-increment"
-        onClick={() =>
-          dispatch({
-            type: ActionType.UPDATE_DEFAULT,
-            payload: { value: 60, session: SessionType.BREAK },
-          })
-        }
-      >
-        +
-      </button>
-      <div id="break-label">
-        BREAK
-        <span id="break-length">{formatInitTime(state.initBreakTime)}</span>
-      </div>
-      <button
-        id="break-decrement"
-        onClick={() =>
-          dispatch({
-            type: ActionType.UPDATE_DEFAULT,
-            payload: { value: -60, session: SessionType.BREAK },
-          })
-        }
-      >
-        -
-      </button>
-      <audio
-        id="beep"
-        preload="auto"
-        src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
-      >
-        Play
-      </audio>
     </>
   );
 }
@@ -281,6 +307,5 @@ enum ActionType {
   START_BREAK = "START_BREAK",
   RESTART = "RESTART",
   START = "START",
-  PAUSE = "PAUSE",
   RESET = "RESET",
 }

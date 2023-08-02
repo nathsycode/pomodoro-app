@@ -11,13 +11,65 @@ $color-accent-2: #41ead4;
 $color-accent-3: #fbff12;
 $color-background: #ffeedb;
 $font-main: "Bebas Neue", sans-serif;
-$font-regular: 4.8rem;
+$font-regular: 3.6rem;
 $font-large: 8.4rem;
-$font-small: 3.6rem;
+$font-small: 2.8rem;
 
-@mixin thickBox {
+:export {
+  colorSession: $color-accent-3;
+  colorBreak: $color-accent-2;
+}
+
+@mixin thickBox($bgColor) {
   border: 0.3rem solid $color-primary;
   box-shadow: 0.4rem 0.4rem 0 $color-primary;
+  background-color: $bgColor;
+}
+
+@mixin simpleAnim {
+  transition: background 0.3s ease-in-out, scale 0.3s ease-out;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    background: rgb(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    scale: 1.1;
+  }
+}
+
+@mixin defaultControls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas: "session session session" "plus value minus";
+
+  justify-content: center;
+  align-items: center;
+
+  width: 20rem;
+  height: 12rem;
+  padding: 1.2rem;
+
+  h3 {
+    text-align: center;
+  }
+
+  .labels {
+    font-size: $font-regular;
+  }
+  .values {
+    font-size: $font-small;
+  }
+
+  button {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: $font-regular;
+    @include simpleAnim();
+  }
 }
 
 *,
@@ -33,13 +85,43 @@ $font-small: 3.6rem;
 
 body {
   height: 100vh;
-  width: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   background: $color-background;
+}
+
+.progress-bar-container {
+  width: 90%;
+
+  height: 4rem;
+
+  position: fixed;
+  top: 2rem;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  @include thickBox($color-primary-light);
+
+  .progress-bar {
+    height: 100%;
+  }
+  .progress-session {
+    background: $color-accent-3;
+  }
+
+  .progress-break {
+    background: $color-accent-2;
+  }
+}
+
+.img-alarm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  translate: -120% -50%;
+
+  z-index: -1;
 }
 
 #timer-label {
@@ -47,19 +129,64 @@ body {
 }
 
 #time-left {
-  @include thickBox();
+  @include thickBox($color-accent-1);
   font-size: calc($font-large - 0.2rem);
   color: $color-primary-light;
-  background: $color-accent-1;
   width: 24rem;
   height: 10rem;
   margin: 0 auto;
   text-align: center;
 }
 
-.controls {
-  background: rebeccapurple;
+.main-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 8vh;
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+
+    .logo {
+      @include simpleAnim();
+    }
+  }
+
+  .default-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10rem;
+
+    .session-controls {
+      @include defaultControls();
+      @include thickBox($color-accent-3);
+    }
+
+    .break-controls {
+      @include defaultControls();
+      @include thickBox($color-accent-2);
+    }
+
+    .labels {
+      grid-area: session;
+    }
+
+    .values {
+      grid-area: value;
+    }
+
+    .increment {
+      grid-area: plus;
+    }
+
+    .decrement {
+      grid-area: minus;
+    }
+  }
 }
